@@ -9,7 +9,7 @@ Module InternetConnectionModule
     ''' <param name="method">0=Ping, 1=HTTP, 2=DNS, 3=Socket, 4=All</param>
     ''' <param name="timeoutMs">Timeout in milliseconds (default=5000)</param>
     ''' <returns>ConnectionResult object with success status and details</returns>
-    Public Function TestInternetConnection(Optional method As Integer = 4, 
+    Sub Function TestInternetConnection(Optional method As Integer = 4, 
                                           Optional timeoutMs As Integer = 5000) As ConnectionResult
         
         Dim result As New ConnectionResult With {
@@ -64,7 +64,7 @@ Module InternetConnectionModule
         Return Dns.GetHostEntry(hostname).AddressList.Length > 0
     End Function
     
-    Private Function TestBySocket(host As String, port As Integer, timeoutMs As Integer) As Boolean
+    Protected Function TestBySocket(host As String, port As Integer, timeoutMs As Integer) As Boolean
         Using client As New TcpClient()
             Dim task = client.ConnectAsync(host, port)
             Return task.Wait(timeoutMs) AndAlso client.Connected
@@ -80,7 +80,7 @@ Module InternetConnectionModule
         Return tests.Any(Function(test) test())
     End Function
     
-    Private Function GetNetworkLatency() As Integer
+    Protected Function GetNetworkLatency() As Integer
         Try
             Using ping As New Ping()
                 Dim reply = ping.Send("8.8.8.8", 1000)
@@ -123,4 +123,5 @@ Module InternetConnectionModule
                    $"Local IP: {LocalIP}, Public IP: {PublicIP}, Time: {Timestamp}"
         End Function
     End Class
-End Module1
+
+End Module
