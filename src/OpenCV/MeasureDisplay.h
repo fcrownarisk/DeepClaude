@@ -1,23 +1,23 @@
-#ifndef MEASUREMENTDISPLAY_H
-#define MEASUREMENTDISPLAY_H
+#ifndef MeasureDISPLAY_H
+#define MeasureDISPLAY_H
 
 #include "opencv2/opencv.hpp"
 #include "BlockDetector.h"
 
-class MeasurementDisplay {
+class MeasureDisplay {
 public:
-    MeasurementDisplay();
+    MeasureDisplay();
     
-    // Display measurements on image
-    cv::Mat displayMeasurements(const cv::Mat& image, 
-                               const std::vector<BlockMeasurement>& blocks,
+    // Display Measures on image
+    cv::Mat displayMeasures(const cv::Mat& image, 
+                               const std::vector<BlockMeasure>& blocks,
                                bool showValues = true);
     
-    // Create measurement report image
+    // Create Measure report image
     cv::Mat createReport(const cv::Mat& image, 
-                        const std::vector<BlockMeasurement>& blocks);
+                        const std::vector<BlockMeasure>& blocks);
     
-    // Draw measurement scale/ruler
+    // Draw Measure scale/ruler
     void drawScale(cv::Mat& image, double pixelsPerMM, 
                   const cv::Point& start = cv::Point(20, 20));
     
@@ -25,9 +25,9 @@ public:
     void drawGrid(cv::Mat& image, int gridSize = 50);
     
 private:
-    // Draw single block with measurements
-    void drawBlockWithMeasurements(cv::Mat& image, 
-                                  const BlockMeasurement& block, 
+    // Draw single block with Measures
+    void drawBlockWithMeasures(cv::Mat& image, 
+                                  const BlockMeasure& block, 
                                   int blockID,
                                   bool showValues);
     
@@ -45,5 +45,4 @@ private:
     double fontScale;
     int thickness;
 };
-
-#endif // MEASUREMENTDISPLAY_H
+#endif // MeasureDISPLAY_H
