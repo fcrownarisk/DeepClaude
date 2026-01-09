@@ -13,13 +13,13 @@ Block::Block() {
     morphIterations = 2;
 }
 
-std::vector<BlockMeasurement> Block::detectBlocks(const cv::Mat& image, bool drawResults) {
-    std::vector<BlockMeasurement> measurements;
+std::vector<Blockmeasure> Block::detectBlocks(const cv::Mat& image, bool drawResults) {
+    std::vector<Blockmeasure> measures;
     
     // Check if image is loaded
     if (image.empty()) {
         std::cerr << "Error: Image is empty!" << std::endl;
-        return measurements;
+        return measures;
     }
     
     // Clone original image for drawing
@@ -31,28 +31,28 @@ std::vector<BlockMeasurement> Block::detectBlocks(const cv::Mat& image, bool dra
     // 2. Find contours
     std::vector<std::vector<cv::Point>> contours = findContours(processed);
     
-    // 3. Calculate measurements for each contour
+    // 3. Calculate measures for each contour
     for (const auto& contour : contours) {
         if (isValidContour(contour)) {
-            BlockMeasurement measurement = calculateMeasurements(contour);
-            measurements.push_back(measurement);
+            Blockmeasure measure = calculatemeasures(contour);
+            measures.push_back(measure);
             
             // Draw on display image if requested
             if (drawResults) {
                 // Draw bounding box
-                cv::rectangle(displayImage, measurement.boundingBox, 
+                cv::rectangle(displayImage, measure.boundingBox, 
                             cv::Scalar(0, 255, 0), 2);
                 
                 // Draw rotated rectangle
                 cv::Point2f vertices[4];
-                measurement.rotatedRect.points(vertices);
+                measure.rotatedRect.points(vertices);
                 for (int i = 0; i < 4; i++) {
                     cv::line(displayImage, vertices[i], vertices[(i+1)%4], 
                             cv::Scalar(255, 0, 0), 2);
                 }
                 
                 // Draw center point
-                cv::circle(displayImage, measurement.center, 5, 
+                cv::circle(displayImage, measure.center, 5, 
                           cv::Scalar(0, 0, 255), -1);
                 
                 // Draw contour
@@ -63,12 +63,12 @@ std::vector<BlockMeasurement> Block::detectBlocks(const cv::Mat& image, bool dra
     }
     
     // Show results if requested
-    if (drawResults && !measurements.empty()) {
+    if (drawResults && !measures.empty()) {
         cv::imshow("Detected Blocks", displayImage);
         cv::waitKey(0);
     }
     
-    return measurements;
+    return measures;
 }
 
 cv::Mat Block::preprocessImage(const cv::Mat& image) {
@@ -109,36 +109,36 @@ std::vector<std::vector<cv::Point>> Block::findContours(const cv::Mat& binaryIma
     return contours;
 }
 
-BlockMeasurement Block::calculateMeasurements(const std::vector<cv::Point>& contour) {
-    BlockMeasurement measurement;
+Blockmeasure Block::calculatemeasures(const std::vector<cv::Point>& contour) {
+    Blockmeasure measure;
     
     // Store contour
-    measurement.contour = contour;
+    measure.contour = contour;
     
-    // Calculate basic measurements
-    measurement.area = cv::contourArea(contour);
-    measurement.perimeter = cv::arcLength(contour, true);
+    // Calculate basic measures
+    measure.area = cv::contourArea(contour);
+    measure.perimeter = cv::arcLength(contour, true);
     
     // Bounding box
-    measurement.boundingBox = cv::boundingRect(contour);
+    measure.boundingBox = cv::boundingRect(contour);
     
     // Rotated rectangle (minimum area rectangle)
-    measurement.rotatedRect = cv::minAreaRect(contour);
-    measurement.angle = measurement.rotatedRect.angle;
+    measure.rotatedRect = cv::minAreaRect(contour);
+    measure.angle = measure.rotatedRect.angle;
     
     // Center point
-    measurement.center = measurement.rotatedRect.center;
+    measure.center = measure.rotatedRect.center;
     
     // Aspect ratio (width/height)
-    cv::Size2f size = measurement.rotatedRect.size;
-    measurement.aspectRatio = (size.width > size.height) ? 
+    cv::Size2f size = measure.rotatedRect.size;
+    measure.aspectRatio = (size.width > size.height) ? 
                              size.width / size.height : 
                              size.height / size.width;
     
     // Classify block type
-    measurement.type = classifyBlockType(measurement.aspectRatio, measurement.area);
+    measure.type = classifyBlockType(measure.aspectRatio, measure.area);
     
-    return measurement;
+    return measure;
 }
 
 bool Block::isValidContour(const std::vector<cv::Point>& contour, double minArea) {
@@ -165,10 +165,10 @@ std::string Block::classifyBlockType(double aspectRatio, double area) {
     }
 }
 
-std::vector<BlockMeasurement> Block::filterBySize(
-    const std::vector<BlockMeasurement>& blocks, double minArea, double maxArea) {
+std::vector<Blockmeasure> Block::filterBySize(
+    const std::vector<Blockmeasure>& blocks, double minArea, double maxArea) {
     
-    std::vector<BlockMeasurement> filtered;
+    std::vector<Blockmeasure> filtered;
     
     for (const auto& block : blocks) {
         if (block.area >= minArea && block.area <= maxArea) {
@@ -179,33 +179,33 @@ std::vector<BlockMeasurement> Block::filterBySize(
     return filtered;
 }
 
-BlockMeasurement Block::findLargestBlock(const std::vector<BlockMeasurement>& blocks) {
+Blockmeasure Block::findLargestBlock(const std::vector<Blockmeasure>& blocks) {
     if (blocks.empty()) {
-        return BlockMeasurement();
+        return Blockmeasure();
     }
     
     auto largest = std::max_element(blocks.begin(), blocks.end(),
-        [](const BlockMeasurement& a, const BlockMeasurement& b) {
+        [](const Blockmeasure& a, const Blockmeasure& b) {
             return a.area < b.area;
         });
     
     return *largest;
 }
 
-BlockMeasurement Block::findSmallestBlock(const std::vector<BlockMeasurement>& blocks) {
+Blockmeasure Block::findSmallestBlock(const std::vector<Blockmeasure>& blocks) {
     if (blocks.empty()) {
-        return BlockMeasurement();
+        return Blockmeasure();
     }
     
     auto smallest = std::min_element(blocks.begin(), blocks.end(),
-        [](const BlockMeasurement& a, const BlockMeasurement& b) {
+        [](const Blockmeasure& a, const Blockmeasure& b) {
             return a.area < b.area;
         });
     
     return *smallest;
 }
 
-void Block::saveMeasurementsToCSV(const std::vector<BlockMeasurement>& blocks, 
+void Block::savemeasuresToCSV(const std::vector<Blockmeasure>& blocks, 
                                           const std::string& filename) {
     std::ofstream file(filename);
     
@@ -235,7 +235,7 @@ void Block::saveMeasurementsToCSV(const std::vector<BlockMeasurement>& blocks,
     }
     
     file.close();
-    std::cout << "Measurements saved to " << filename << std::endl;
+    std::cout << "measures saved to " << filename << std::endl;
 }
 
 void Block::setPreprocessingParams(int blurSize, int cannyLow, int cannyHigh) {
@@ -247,4 +247,5 @@ void Block::setPreprocessingParams(int blurSize, int cannyLow, int cannyHigh) {
 void Block::setMorphologyParams(int kernelSize, int iterations) {
     morphKernelSize = kernelSize;
     morphIterations = iterations;
+
 }
