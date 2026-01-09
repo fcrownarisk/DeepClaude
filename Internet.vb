@@ -3,7 +3,7 @@ Imports System.Net.NetworkInformation
 Imports System.Net.Sockets
 Imports System.Text
 
-Module InternetConnectionModule
+Module InternetConnection
 
     ''' Tests Internet connectivity using multiple methods
     ''' <param name="method">0=Ping, 1=HTTP, 2=DNS, 3=Socket, 4=All</param>
@@ -44,7 +44,8 @@ Module InternetConnectionModule
         
         Return result
     End Function
-    
+End Sub
+        
     Private Function TestByPing(host As String, timeoutMs As Integer) As Boolean
         Using ping As New Ping()
             Dim reply = ping.Send(host, timeoutMs)
@@ -123,5 +124,4 @@ Module InternetConnectionModule
                    $"Local IP: {LocalIP}, Public IP: {PublicIP}, Time: {Timestamp}"
         End Function
     End Class
-
 End Module
