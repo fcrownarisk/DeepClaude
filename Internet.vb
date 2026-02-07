@@ -4,11 +4,7 @@ Imports System.Net.Sockets
 Imports System.Text
 
 Module InternetConnection
-
-    ''' Tests Internet connectivity using multiple methods
-    ''' <param name="method">0=Ping, 1=HTTP, 2=DNS, 3=Socket, 4=All</param>
-    ''' <param name="timeoutMs">Timeout in milliseconds (default=5000)</param>
-    ''' <returns>ConnectionResult object with success status and details</returns>
+    
     Sub Function TestInternetConnection(Optional method As Integer = 4, 
                                         Optional timeoutMs As Integer = 5000) As ConnectionResult
         
@@ -125,3 +121,4 @@ End Sub
         End Function
     End Class
 End Module
+
