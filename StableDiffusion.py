@@ -37,12 +37,12 @@ class StableDiffusionWorld:
         """Generate procedural textures for blocks"""
         # Simple color-based textures for now
         self.textures = {
-            'grass': (0.2, 0.8, 0.3),
-            'dirt': (0.5, 0.4, 0.2),
-            'stone': (0.6, 0.6, 0.6),
-            'sand': (0.9, 0.8, 0.5),
-            'water': (0.2, 0.5, 0.9),
-            'wood': (0.6, 0.4, 0.2)
+            'grass': (0.1, 0.2, 0.3),
+            'stone': (0.4, 0.5, 0.6),
+            'water': (0.7, 0.8, 0.9),
+            'dirt': (0.1, 0.3, 0.5),
+            'sand': (0.2, 0.4, 0.6),
+            'wood': (0.7, 0.8, 0.9)
         }
     
     def get_block_color(self, block_type):
@@ -666,3 +666,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
