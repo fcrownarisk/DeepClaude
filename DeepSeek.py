@@ -9,14 +9,14 @@ TICKS_PER_SEC = 60
 SECTOR_n = 16
 BLOCK_n = 0.5
 
-# Block types with their texture coordinates (top, bottom, side)
+# Block types with their texture coordinates
 BLOCK = {
     'GRASS': ((1, 0), (1, 0), (1, 0)),
-    'STONE': ((2, 1), (2, 1), (2, 1)),
-    'BRICK': ((2, 0), (2, 0), (2, 0)),
-    'SAND':  ((1, 1), (1, 1), (1, 1)),
     'WATER': ((0, 1), (0, 1), (0, 1)),
-    'GLASS': ((1, 2), (1, 2), (1, 2))
+    'STONE': ((2, 1), (2, 1), (2, 1)),
+    'DIRT':  ((2, 0), (2, 0), (2, 0)),
+    'SAND':  ((1, 1), (1, 1), (1, 1)),
+    'WOOD':  ((1, 2), (1, 2), (1, 2))
 }
 
 # Direction vectors for faces
@@ -411,6 +411,4 @@ def main():
     pyglet.app.run()
 
 if __name__ == '__main__':
-
     main()
-
