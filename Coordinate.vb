@@ -53,7 +53,7 @@ End Module
 
 Module Square
     Sub Main()
-        Dim Edge As Double = Edge
+        Dim Edge As Double
         Dim Dot4 As New Line(Edge, -Edge)
         Dim Dot5 As New Line(-Edge, Edge)
         Dim Dot6 As New Line(Edge, Edge)
