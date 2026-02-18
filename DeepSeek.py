@@ -8,7 +8,7 @@ import random
 TICKS_PER_SEC = 60
 SECTOR_n = 16
 BLOCK_HALF_SIZE = 0.5          # Renamed from BLOCK_n for clarity
-WORLD_HALF = 30                 # World extends from -WORLD_HALF to WORLD_HALF
+WORLD_HALF = 32                # World extends from -WORLD_HALF to WORLD_HALF
 
 # Block types with their texture coordinates (grid positions in texture atlas)
 BLOCK = {
@@ -487,3 +487,4 @@ def main():
     pyglet.app.run()
 if __name__ == '__main__':
     main()
+
