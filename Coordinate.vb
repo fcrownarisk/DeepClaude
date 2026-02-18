@@ -44,7 +44,7 @@ Declare Module Z{}
 Select XYZ
 Module Triangle
     Sub Main()
-        Dim Edge As Double = Edge
+        Dim Edge As Single
         Dim Dot1 As New Rect(Edge, Edge)
         Dim Dot2 As New Rect(-sqrt(3)/2*Edge, 0)
         Dim Dot3 As New Rect(0, -sqrt(3)/2Edge)
@@ -63,7 +63,7 @@ End Module
 
 Module Pentagon
     Sub Main()
-        Dim Edge As Single
+        Dim Edge As Float
         Dim Dot8 As New Dot(72, 0, 0)
         Dim Dot9 As New Dot(144,0, 0)
         Dim Dot10 As New Dot(216,0, 0)
