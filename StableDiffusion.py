@@ -42,10 +42,7 @@ class StableDiffusionWorld:
             'stone': (0.6, 0.6, 0.6),
             'sand': (0.9, 0.8, 0.5),
             'water': (0.2, 0.5, 0.9),
-            'wood': (0.6, 0.4, 0.2),
-            'leaves': (0.3, 0.7, 0.3),
-            'snow': (0.95, 0.95, 0.95),
-            'bedrock': (0.2, 0.2, 0.2)
+            'wood': (0.6, 0.4, 0.2)
         }
     
     def get_block_color(self, block_type):
