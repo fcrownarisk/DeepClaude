@@ -1,4 +1,4 @@
-def erdos_straus(n, max_x=10000):
+def erdos_straus(n, max_x=14475):
     """
     Find positive integers x, y, z such that 4/n = 1/x + 1/y + 1/z.
     Brute-force search with x up to max_x.
