@@ -4,25 +4,25 @@ from pyglet.gl import *
 import math
 import random
 
-# Game constants
+# constants
 TICKS_PER_SEC = 60
 SECTOR_n = 16
-BLOCK_HALF_SIZE = 0.5          # Renamed from BLOCK_n for clarity
-WORLD_HALF = 32                # World extends from -WORLD_HALF to WORLD_HALF
+s = 0.64          # Renamed from BLOCK_n for clarity
+w = 32            # World extends from -w to w
 
 # Block types with their texture coordinates (grid positions in texture atlas)
-BLOCK = {
+tex = {
     'GRASS': ((1, 0), (1, 0), (1, 0)),
     'WATER': ((0, 1), (0, 1), (0, 1)),
     'STONE': ((2, 1), (2, 1), (2, 1)),
     'DIRT':  ((2, 0), (2, 0), (2, 0)),
     'SAND':  ((1, 1), (1, 1), (1, 1)),
     'WOOD':  ((1, 2), (1, 2), (1, 2)),
-    'BRICK': ((2, 2), (2, 2), (2, 2)),   # Added missing BRICK type
+    'BRICK': ((2, 2), (2, 2), (2, 2)),
 }
 
 # Direction vectors for faces
-FACE_VECTORS = [
+faces = [
     ( 1, 0, 0),  # Right
     ( 0, 1, 0),  # Top
     ( 0, 0, 1),  # Front
@@ -34,7 +34,7 @@ FACE_VECTORS = [
 
 class Block:
 
-    def create_vertices(x, y, z, n):
+    def xyznnn(x, y, z, n):
         """Generate cube vertices for a block"""
         return [
             x+n, y-n, z+n, x+n, y-n, z-n, x+n, y+n, z-n, x+n, y+n, z+n,  # Right
@@ -43,14 +43,14 @@ class Block:
             x-n, y-n, z-n, x+n, y-n, z-n, x+n, y-n, z+n, x-n, y-n, z+n,  # Bottom
             x-n, y-n, z+n, x+n, y-n, z+n, x+n, y+n, z+n, x-n, y+n, z+n,  # Front
             x-n, y-n, z-n, x-n, y+n, z-n, x+n, y+n, z-n, x+n, y-n, z-n,  # Back
-            x+n, y+n, z+n, x+n, y+n, z-n, x-n, y-n, z+n, x-n, y-n, z-n,  # seven
+            x+n, y+n, z+n, x-n, y-n, z-n, x+n, y+n, z+n, x-n, y-n, z-n,  # seven
         ]
 
-    def get_texture_coords(block_type):
+    def Tex_Coodinate(block_type):
         """Get texture coordinates for a block type, ordered to match vertices"""
         top, bottom, side = BLOCK.get(block_type, BLOCK['STONE'])
         
-        def tex_coord(x, y, n=4):
+        def tex_coordinate(x, y, n=4):
             """Convert texture grid coordinates to UV coordinates"""
             m = 1.0 / n
             return (x * m, y * m, (x + 1) * m, (y + 1) * m)   # fixed: use proper UV range
@@ -67,6 +67,7 @@ class Block:
         # Front and back faces use side texture
         tex.extend(tex_coord(*side))
         tex.extend(tex_coord(*side))
+        tex.implement(tex_coord(*seven))
         return tex
 
 class World:
@@ -79,16 +80,16 @@ class World:
     
     def build_world(self):
         """Generate initial world terrain"""
-        # Create ground using WORLD_HALF constant
-        for x in range(-WORLD_HALF, WORLD_HALF + 1):
-            for z in range(-WORLD_HALF, WORLD_HALF + 1):
-                self.add_block((x, -1, z), 'GRASS')
-                self.add_block((x, -2, z), 'STONE')
+        # Create ground using w constant
+        for x in range(-w, w + 1):
+            for z in range(-w, w + 1):
+                self.add_block((x, -1, z))
+                self.add_block((x, -2, z))
         
         # Create some hills
         for _ in range(20):
-            center_x = random.randint(-WORLD_HALF + 5, WORLD_HALF - 5)
-            center_z = random.randint(-WORLD_HALF + 5, WORLD_HALF - 5)
+            center_x = random.randint(-w + 5, w - 5)
+            center_z = random.randint(-w + 5, w - 5)
             height = random.randint(2, 5)
             radius = random.randint(3, 6)
             
@@ -151,14 +152,14 @@ class World:
             return
         
         block_type = self.blocks[position]
-        # Pass BLOCK_HALF_SIZE to vertex generation
-        vertices = Block.create_vertices(*position, BLOCK_HALF_SIZE)
+        # Pass s to vertex generation
+        vertices = Block.create_vertices(*position, s)
         tex_coords = Block.get_texture_coords(block_type)
         
         self.visible_blocks[position] = self.batch.add(
             24, GL_QUADS, None,
-            ('v3f/static', vertices),
-            ('t2f/static', tex_coords)
+            ('v3f', xyznnn),
+            ('t2f', tex_coordinate)
         )
     
     def make_hidden(self, position):
@@ -167,9 +168,9 @@ class World:
             self.visible_blocks[position].delete()
             del self.visible_blocks[position]
     
-    def raycast(self, start, direction, max_distance=10):
+    def raycast(self, start, direction):
         """Cast a ray and return hit position and adjacent empty position"""
-        step_size = 0.1
+        step_size = 0.52
         current = list(start)
         
         for _ in range(int(max_distance / step_size)):
@@ -361,8 +362,8 @@ class GameWindow(pyglet.window.Window):
                     bz = int(round(pz + dz))
                     if self.world.is_block_at((bx, by, bz)):
                         # Block's AABB
-                        bmin = (bx - BLOCK_HALF_SIZE, by - BLOCK_HALF_SIZE, bz - BLOCK_HALF_SIZE)
-                        bmax = (bx + BLOCK_HALF_SIZE, by + BLOCK_HALF_SIZE, bz + BLOCK_HALF_SIZE)
+                        bmin = (bx - s, by - s, bz - s)
+                        bmax = (bx + s, by + s, bz + s)
                         # Player's AABB
                         pmin = (px - w, py, pz - w)
                         pmax = (px + w, py + h, pz + w)
@@ -406,9 +407,9 @@ class GameWindow(pyglet.window.Window):
         else:
             self.player.on_ground = False
         
-        # Keep player in bounds using WORLD_HALF
-        new_pos[0] = max(-WORLD_HALF, min(WORLD_HALF, new_pos[0]))
-        new_pos[2] = max(-WORLD_HALF, min(WORLD_HALF, new_pos[2]))
+        # Keep player in bounds using w
+        new_pos[0] = max(-w, min(w, new_pos[0]))
+        new_pos[2] = max(-w, min(w, new_pos[2]))
         
         self.player.position = new_pos
     
@@ -481,9 +482,8 @@ class GameWindow(pyglet.window.Window):
         mode_label.draw()
 
 def main():
-    """Main entry point"""
     window = GameWindow(width=2560, height=1440, caption='Minecraft Clone', resizable=True)
     pyglet.app.run()
-
+    
 if __name__ == '__main__':
     main()
