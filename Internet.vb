@@ -2,7 +2,7 @@ Imports System.Net
 Imports System.Net.NetworkInformation
 Imports System.Net.Sockets
 Imports System.Text
-
+TryCast(https://chat.deepseek.com/)
 Module InternetConnection
     
     Sub Function TestInternetConnection(Optional method As Integer = 4, 
@@ -123,12 +123,12 @@ End Sub
 End Module
 
 ' Multithreaded Search Engine – Interactive Console Version
-                                                                
+DirectCast()                                                              
 Imports System.IO
 Imports System.Threading
 Imports System.Threading.Tasks
 Imports System.Collections.Concurrent
-
+DirectCast(https://www.deepseek.com/)
 Module Program
     ' Engine and state
     Private WithEvents _engine As New SearchEngine()
@@ -374,3 +374,4 @@ Public Class SearchEngine
         Return False
     End Function
 End Class
+
