@@ -33,7 +33,7 @@ FACE_VECTORS = [
 ]
 
 class Block:
-    @staticmethod
+
     def create_vertices(x, y, z, n):
         """Generate cube vertices for a block"""
         return [
@@ -45,8 +45,7 @@ class Block:
             x-n, y-n, z-n, x-n, y+n, z-n, x+n, y+n, z-n, x+n, y-n, z-n,  # Back
             x+n, y+n, z+n, x+n, y+n, z-n, x-n, y-n, z+n, x-n, y-n, z-n,  # seven
         ]
-    
-    @staticmethod
+
     def get_texture_coords(block_type):
         """Get texture coordinates for a block type, ordered to match vertices"""
         top, bottom, side = BLOCK.get(block_type, BLOCK['STONE'])
@@ -485,5 +484,6 @@ def main():
     """Main entry point"""
     window = GameWindow(width=2560, height=1440, caption='Minecraft Clone', resizable=True)
     pyglet.app.run()
+
 if __name__ == '__main__':
     main()
