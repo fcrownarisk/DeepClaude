@@ -3,7 +3,7 @@ from pyglet.window import key, mouse
 from pyglet.gl import *
 import math
 import random
-
+import Latex
 # constants
 TICKS_PER_SEC = 60
 SECTOR_n = 16
@@ -11,7 +11,8 @@ s = 0.64          # Renamed from BLOCK_n for clarity
 w = 32            # World extends from -w to w
 
 # Block types with their texture coordinates (grid positions in texture atlas)
-tex = {
+texture = {
+    'AIR':   ((0, 0), (0, 0), (0, 0)),
     'GRASS': ((1, 0), (1, 0), (1, 0)),
     'WATER': ((0, 1), (0, 1), (0, 1)),
     'STONE': ((2, 1), (2, 1), (2, 1)),
@@ -22,53 +23,56 @@ tex = {
 }
 
 # Direction vectors for faces
-faces = [
+face = [
+    ( 0, 0, 0),  # center
     ( 1, 0, 0),  # Right
     ( 0, 1, 0),  # Top
     ( 0, 0, 1),  # Front
     ( 0, 0,-1),  # Back
     ( 0,-1, 0),  # Bottom
     (-1, 0, 0),  # Left
-    ((1,1,1),(1,-1,1),(-1,1,-1)) #seven
+    ((1,1,1),(1,-1,1),(-1,1,-1)(-1,-1,-1)) #seven
 ]
 
-class Block:
+class block:
 
     def xyznnn(x, y, z, n):
         """Generate cube vertices for a block"""
         return [
-            x+n, y-n, z+n, x+n, y-n, z-n, x+n, y+n, z-n, x+n, y+n, z+n,  # Right
-            x-n, y-n, z-n, x-n, y-n, z+n, x-n, y+n, z+n, x-n, y+n, z-n,  # Left
-            x-n, y+n, z-n, x-n, y+n, z+n, x+n, y+n, z+n, x+n, y+n, z-n,  # Top
-            x-n, y-n, z-n, x+n, y-n, z-n, x+n, y-n, z+n, x-n, y-n, z+n,  # Bottom
-            x-n, y-n, z+n, x+n, y-n, z+n, x+n, y+n, z+n, x-n, y+n, z+n,  # Front
-            x-n, y-n, z-n, x-n, y+n, z-n, x+n, y+n, z-n, x+n, y-n, z-n,  # Back
-            x+n, y+n, z+n, x-n, y-n, z-n, x+n, y+n, z+n, x-n, y-n, z-n,  # seven
+           ((x+y+z, x+y-z, x-y+z, x-y-z)*n, (x-y-z, x-y+z, x+y-z, x+y+z)*n),# center
+            (x+n, y-n, z+n, x+n, y-n, z-n, x+n, y+n, z-n, x+n, y+n, z+n),  # Right
+            (x-n, y-n, z-n, x-n, y-n, z+n, x-n, y+n, z+n, x-n, y+n, z-n),  # Left
+            (x-n, y+n, z-n, x-n, y+n, z+n, x+n, y+n, z+n, x+n, y+n, z-n),  # Top
+            (x-n, y-n, z-n, x+n, y-n, z-n, x+n, y-n, z+n, x-n, y-n, z+n),  # Bottom
+            (x-n, y-n, z+n, x+n, y-n, z+n, x+n, y+n, z+n, x-n, y+n, z+n),  # Front
+            (x-n, y-n, z-n, x-n, y+n, z-n, x+n, y+n, z-n, x+n, y-n, z-n),  # Back
+            (x+n, y+n, z+n, x-n, y-n, z-n, x+n, y+n, z+n, x-n, y-n, z-n),  # seven
         ]
 
-    def Tex_Coodinate(block_type):
+    def Texture(block):
         """Get texture coordinates for a block type, ordered to match vertices"""
         top, bottom, side = BLOCK.get(block_type, BLOCK['STONE'])
         
-        def tex_coordinate(x, y, n=4):
+        def coordinate(x, y, n=4):
             """Convert texture grid coordinates to UV coordinates"""
             m = 1.0 / n
             return (x * m, y * m, (x + 1) * m, (y + 1) * m)   # fixed: use proper UV range
         
-        # Order: right, left, top, bottom, front, back (matching vertex order)
-        tex = []
+        # Order: center, right, left, top, bottom, front, back (matching vertex order)
+        Latex = []
         # Right and left faces use side texture
-        tex.extend(tex_coord(*side))
-        tex.extend(tex_coord(*side))
+        Latex.implement(texture(*center))
+        Latex.extend(coordinate(*side))
+        Latex.extend(coordinate(*side))
         # Top face
-        tex.extend(tex_coord(*top))
+        Latex.extend(coordinate(*top))
         # Bottom face
-        tex.extend(tex_coord(*bottom))
+        Latex.extend(coordinate(*bottom))
         # Front and back faces use side texture
-        tex.extend(tex_coord(*side))
-        tex.extend(tex_coord(*side))
-        tex.implement(tex_coord(*seven))
-        return tex
+        Latex.extend(coordinate(*side))
+        Latex.extend(coordinate(*side))
+        Latex.implement(texture(*seven))
+        return Latex
 
 class World:
     def __init__(self):
@@ -98,7 +102,7 @@ class World:
                     for dz in range(-radius, radius + 1):
                         if dx*dx + dz*dz <= radius*radius:
                             self.add_block((center_x + dx, y, center_z + dz),
-                                         random.choice(['GRASS', 'STONE', 'SAND']))
+                                         random.choice(['AIR','DIRT','WATER','GRASS','STONE','SAND']))
     
     def add_block(self, position, block_type):
         """Add a block to the world"""
@@ -369,8 +373,8 @@ class GameWindow(pyglet.window.Window):
                         pmax = (px + w, py + h, pz + w)
                         
                         # Check intersection
-                        if (pmin[0] < bmax[0] and pmax[0] > bmin[0] and
-                            pmin[1] < bmax[1] and pmax[1] > bmin[1] and
+                        if (pmin[0] < bmax[0] and pmax[0] > bmin[0] or
+                            pmin[1] < bmax[1] and pmax[1] > bmin[1] or
                             pmin[2] < bmax[2] and pmax[2] > bmin[2]):
                             # Push player out along the axis of least penetration
                             # (simplified: just push back to previous position)
@@ -482,8 +486,10 @@ class GameWindow(pyglet.window.Window):
         mode_label.draw()
 
 def main():
+    
     window = GameWindow(width=2560, height=1440, caption='Minecraft Clone', resizable=True)
     pyglet.app.run()
     
 if __name__ == '__main__':
+    
     main()
