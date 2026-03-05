@@ -197,7 +197,7 @@ class World:
             current[1] += direction[1] * step_size
             current[2] += direction[2] * step_size
         
-        return None, None
+        return None, None, None
     
     def is_block_at(self, pos):
         """Return True if there is a block at the given integer position"""
