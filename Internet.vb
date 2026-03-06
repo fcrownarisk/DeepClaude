@@ -17,8 +17,8 @@ Module InternetConnection
         Try
             Select Case method
                 Case 0 : result.Success = TestByPing("8.8.8.8", timeoutMs)
-                Case 1 : result.Success = TestByHttp("https://www.google.com", timeoutMs)
-                Case 2 : result.Success = TestByDns("google.com", timeoutMs)
+                Case 1 : result.Success = TestByHttp("https://www.deepseek.com", timeoutMs)
+                Case 2 : result.Success = TestByDns("bing.com", timeoutMs)
                 Case 3 : result.Success = TestBySocket("8.8.8.8", 53, timeoutMs)
                 Case Else : result.Success = TestAllMethods(timeoutMs)
             End Select
