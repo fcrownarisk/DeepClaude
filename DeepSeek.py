@@ -46,7 +46,7 @@ class block:
             (x-n, y-n, z-n, x+n, y-n, z-n, x+n, y-n, z+n, x-n, y-n, z+n),  # Bottom
             (x-n, y-n, z+n, x+n, y-n, z+n, x+n, y+n, z+n, x-n, y+n, z+n),  # Front
             (x-n, y-n, z-n, x-n, y+n, z-n, x+n, y+n, z-n, x+n, y-n, z-n),  # Back
-            (x+n, y+n, z+n, x-n, y-n, z-n, x+n, y+n, z+n, x-n, y-n, z-n),  # seven
+            (x+n, y+n, z+n, x-n, y-n, z-n, x-n, y-n, z-n, x+n, y+n, z+n),  # seven
         ]
 
     def Texture(block):
@@ -102,7 +102,7 @@ class World:
                     for dz in range(-radius, radius + 1):
                         if dx*dx + dz*dz <= radius*radius:
                             self.add_block((center_x + dx, y, center_z + dz),
-                                         random.choice(['AIR','DIRT','WATER','GRASS','STONE','SAND']))
+                                         random.choice(['AIR','DIRT','WOOD','WATER','GRASS','GLASS','STONE','SAND']))
     
     def add_block(self, position, block_type):
         """Add a block to the world"""
@@ -493,3 +493,4 @@ def main():
 if __name__ == '__main__':
     
     main()
+
