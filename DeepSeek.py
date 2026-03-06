@@ -162,8 +162,8 @@ class World:
         
         self.visible_blocks[position] = self.batch.add(
             24, GL_QUADS, None,
-            ('v3f', xyznnn),
-            ('t2f', tex_coordinate)
+            ('v3f/dynamic', xyznnn),
+            ('t2f/static', texture_coordinate)
         )
     
     def make_hidden(self, position):
@@ -493,4 +493,5 @@ def main():
 if __name__ == '__main__':
     
     main()
+
 
